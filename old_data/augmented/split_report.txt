@@ -1,0 +1,34 @@
+============================================================
+AUGMENTATION & SPLIT REPORT
+============================================================
+Source annotations  : ./data/annotations.xml
+Valid images parsed : 175
+Skipped (no annots) : 3
+
+SPLIT BREAKDOWN
+  Train originals   : 122
+  Train augmented   : 1342 (incl. originals + x10 augs)
+  Val               : 26
+  Test              : 27
+  TOTAL             : 1395
+
+AUGMENTATIONS APPLIED (train only)
+  - HorizontalFlip (p=0.5) with keypoint pair swapping (detected via ReplayCompose)
+  - RandomBrightnessContrast (p=0.6)
+  - HueSaturationValue (p=0.5)
+  - GaussianBlur (p=0.25)
+  - Rotate ±12° (p=0.5)
+  - ShiftScaleRotate (p=0.4)
+  - RandomGamma (p=0.3)
+  - ImageCompression (p=0.2)
+
+KEYPOINT FLIP PAIRS SWAPPED ON HORIZONTAL FLIP
+  (2,4) dorsal fin base anterior <-> posterior
+  (5,6) caudal peduncle top <-> bottom
+  (7,8) caudal fin tip upper <-> lower
+  (9,11) anal fin base anterior <-> posterior
+
+OUTPUT
+  Images  : ./data/augmented\images
+  XML     : ./data/augmented\annotations_augmented.xml
+============================================================

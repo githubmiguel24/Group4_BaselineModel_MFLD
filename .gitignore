@@ -1,0 +1,17 @@
+# Virtual Environments
+fish_env/
+venv/
+__pycache__/
+
+# Datasets and Images
+data/
+*.jpg
+*.png
+
+# Model Weights and Checkpoints
+*.pth
+checkpoints/
+logs/
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints/
