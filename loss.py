@@ -1,16 +1,4 @@
-"""
-loss.py
--------
-loss for MFLD-net
 
-Paper §Hybrid prediction and a multitask loss function:
-  Loss = α × JSD(heatmap) + (1−α) × Euclidean(coords)
-
-Where:
-  JSD  = Jensen-Shannon Divergence between predicted and GT heatmaps (Eq. 3)
-  Euclidean = Euclidean distance between predicted and GT normalised coords (Eq. 1)
-  α = 0.5 (i.e. simple average of the two losses)
-"""
 
 import torch
 import torch.nn as nn
@@ -23,14 +11,7 @@ import config
 # 
 
 class JSDHeatmapLoss(nn.Module):
-    """
-    Jensen-Shannon Divergence between predicted and ground-truth heatmaps.
-
-    Both inputs are treated as unnormalised logit maps; softmax is applied
-    internally before computing the divergence.  Lower is better (min=0).
-
-    JSD = sqrt( (KL(P||M) + KL(Q||M)) / 2 )   where M = (P+Q)/2
-    """
+  
 
     def __init__(self, eps: float = 1e-8):
         super().__init__()
@@ -64,12 +45,7 @@ class JSDHeatmapLoss(nn.Module):
 
 
 class EuclideanCoordLoss(nn.Module):
-    """
-    Mean Euclidean distance between predicted and ground-truth keypoint
-    coordinates.  Coordinates are expected in [0, 1].
 
-    Visibility mask: only keypoints with vis > 0 contribute to the loss.
-    """
 
     def __init__(self, eps: float = 1e-8):
         super().__init__()
@@ -92,10 +68,7 @@ class EuclideanCoordLoss(nn.Module):
 
 
 class WingLoss(nn.Module):
-    """
-    Wing Loss (Feng et al., 2018) – optional alternative to Euclidean.
-    More robust to outliers; useful when some annotations are noisy.
-    """
+
 
     def __init__(self, w: float = 10.0, epsilon: float = 2.0):
         super().__init__()
@@ -126,13 +99,7 @@ class WingLoss(nn.Module):
 # ─────────────────────────────────────────────────────────────────────────────
 
 class MultiTaskLoss(nn.Module):
-    """
-    Combines heatmap JSD and coordinate Euclidean losses.
 
-    total_loss = alpha * jsd_loss + (1-alpha) * coord_loss
-
-    The paper uses alpha=0.5 (§Hybrid prediction).
-    """
 
     def __init__(
         self,
@@ -152,13 +119,11 @@ class MultiTaskLoss(nn.Module):
         gt_coords:     torch.Tensor,   # (B, K, 2)
         visibility:    torch.Tensor,   # (B, K)
     ):
-        """
-        Returns
-        -------
-        total_loss   : scalar Tensor
-        coord_loss   : scalar Tensor  (for logging)
-        heatmap_loss : scalar Tensor  (for logging)
-        """
+        # Returns
+        # -------
+        # total_loss   : scalar Tensor
+        # coord_loss   : scalar Tensor  (for logging)
+        # heatmap_loss : scalar Tensor  (for logging)
         heatmap_loss = self.jsd_loss(pred_heatmap, gt_heatmap)
         coord_loss   = self.coord_loss(pred_coords, gt_coords, visibility)
 
@@ -168,14 +133,14 @@ class MultiTaskLoss(nn.Module):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  Sanity check
+#  Sanity checker
 # ─────────────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
     B, K, H, W = 4, 16, 56, 56
 
     pred_hm  = torch.randn(B, K, H, W)
-    gt_hm    = torch.randn(B, K, H, W).abs()   # non-negative Gaussians
+    gt_hm    = torch.randn(B, K, H, W).abs()  
     pred_co  = torch.rand(B, K, 2)
     gt_co    = torch.rand(B, K, 2)
     vis      = torch.ones(B, K, dtype=torch.long)

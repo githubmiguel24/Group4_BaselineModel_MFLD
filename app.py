@@ -41,7 +41,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ── We want EXACTLY 13 keypoints ───────────────────────────
+# ── 13 keypoints ────────────────
 NUM_KP = 13
 KP_NAMES = [
     "Snout", "Eye", "Nape", "Dorsal Fin Base",
@@ -56,7 +56,7 @@ COLORS_HEX = [
 ]
 COLORS_BGR = [tuple(int(h.lstrip('#')[i:i+2], 16) for i in (0,2,4))[::-1] for h in COLORS_HEX]
 
-# ── Model Loading ───────────────────────────────────────────
+# ── Model ──────────────────────────────
 @st.cache_resource
 def load_model(model_path):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -80,7 +80,7 @@ def load_model(model_path):
 
 model, device = load_model("best.pth")
 
-# ── UI ─────────────────────────────────────────────────────
+# ── UI ───────────────────────────
 st.markdown('<div class="main-brand">BettaTool</div>', unsafe_allow_html=True)
 
 uploaded_file = st.file_uploader("Upload Image to Analyze", type=["jpg", "png", "jpeg"])
@@ -105,10 +105,6 @@ if uploaded_file is not None:
         with torch.no_grad():
             heatmaps, _ = model(input_tensor)   # shape: (1, C, H, W)
 
-    # ════════════════════════════════════════════════════════
-    # FORCE exactly 13 keypoints by selecting the first 13 channels
-    # (Even if the model has 30 channels, we only use the first 13)
-    # ════════════════════════════════════════════════════════
     total_channels = heatmaps.shape[1]
     if total_channels < NUM_KP:
         st.error(f"Model only has {total_channels} heatmap channels, but we need {NUM_KP}.")
